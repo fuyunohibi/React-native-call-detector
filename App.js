@@ -7,7 +7,25 @@ import Modal from 'react-native-modal';
 const { CallNativeModule } = NativeModules;
 
 async function requestPhoneStatePermission() {
-  // Permission code remains the same
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
+      {
+        title: "Call Notification Permission",
+        message: "This app needs access to your phone state to detect incoming calls.",
+        buttonNeutral: "Ask Me Later",
+        buttonNegative: "Cancel",
+        buttonPositive: "OK"
+      }
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log("You can read phone state");
+    } else {
+      console.log("Phone state permission denied");
+    }
+  } catch (err) {
+    console.warn(err);
+  }
 }
 
 function App() {
@@ -38,7 +56,7 @@ function App() {
               // Simulate call duration and update incomingCall state after the call ends
               setTimeout(() => {
                 setIncomingCall(false);
-              }, 5000); // Change the timeout value to match the actual call duration
+              }, 3000); // Change the timeout value to match the actual call duration
             });
 
             return () => {
