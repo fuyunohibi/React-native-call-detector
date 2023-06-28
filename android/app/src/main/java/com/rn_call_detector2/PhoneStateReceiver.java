@@ -9,6 +9,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
+
 public class PhoneStateReceiver extends BroadcastReceiver {
 
     private final ReactApplicationContext reactContext;
@@ -24,6 +25,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         }
 
         String phoneNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
+
 
         WritableMap payload = Arguments.createMap();
         payload.putString("phoneNumber", phoneNumber);
