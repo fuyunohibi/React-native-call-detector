@@ -78,4 +78,8 @@ public class MainApplication extends Application implements ReactApplication {
       notificationManager.createNotificationChannel(channel);
     }
   }
+
+  public String getChannelId() {
+    return channelId;
+  }
 }

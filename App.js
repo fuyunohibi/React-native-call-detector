@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { View, Text } from 'react-native';
 import { NativeModules, DeviceEventEmitter, PermissionsAndroid } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 
@@ -33,20 +34,37 @@ function App() {
       .then(() => {
         CallNativeModule.startListening();
 
-        const subscription = DeviceEventEmitter.addListener('incomingCall', (data) => {
-          PushNotification.localNotification({
-            message: `Incoming call from ${data.phoneNumber}`,
-          });
-        });
+        CallNativeModule.getChannelId()
+          .then(channelId => {
+            console.log('Channel ID:', channelId); 
+            const subscription = DeviceEventEmitter.addListener('incomingCall', (data) => {
+              const phoneNumber = data.phoneNumber || 'Unknown'; // Unknown if phone number is not available
+              PushNotification.localNotification({
+                channelId: channelId,
+                title: 'RN_call_notification',
+                message: `Incoming call from ${phoneNumber}`,
+              });
+            });
 
-        return () => {
-          subscription.remove();
-          CallNativeModule.stopListening();
-        };
+            return () => {
+              subscription.remove();
+              CallNativeModule.stopListening();
+            };
+          })
+          .catch(error => {
+            console.log('Error retrieving channel ID:', error);
+          });
       });
   }, []);
 
-  // rest of your app code here
+  return (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#252525'}}>
+      <Text style={{fontSize: 13, fontWeight: 'bold', color: 'white'}}>
+        Incoming Call Notification
+      </Text>
+    </View>
+  )
+  
 }
 
 export default App;

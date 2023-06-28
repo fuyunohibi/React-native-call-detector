@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.Promise;
 
 public class CallNativeModule extends ReactContextBaseJavaModule {
 
@@ -50,5 +51,16 @@ public class CallNativeModule extends ReactContextBaseJavaModule {
         IntentFilter filter = new IntentFilter();
         filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
         reactContext.registerReceiver(phoneStateReceiver, filter);
+    }
+
+    @ReactMethod
+    public void getChannelId(Promise promise) {
+    try {
+        MainApplication application = (MainApplication) getReactApplicationContext().getApplicationContext();
+        String channelId = application.getChannelId();
+        promise.resolve(channelId);
+    } catch (Exception e) {
+        promise.reject("GET_CHANNEL_ID_ERROR", e.getMessage());
+    }
     }
 }
