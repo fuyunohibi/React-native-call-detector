@@ -8,20 +8,27 @@ const { CallNativeModule } = NativeModules;
 
 async function requestPhoneStatePermission() {
   try {
-    const granted = await PermissionsAndroid.request(
+    const permissions = [
       PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
-      {
-        title: "Call Notification Permission",
-        message: "This app needs access to your phone state to detect incoming calls.",
-        buttonNeutral: "Ask Me Later",
-        buttonNegative: "Cancel",
-        buttonPositive: "OK"
-      }
-    );
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log("You can read phone state");
+      PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
+    ];
+
+    const grantResult = await PermissionsAndroid.requestMultiple(permissions, {
+      title: "Call Notification Permission",
+      message:
+        "This app needs access to your phone state and call log to detect incoming calls.",
+      buttonNeutral: "Ask Me Later",
+      buttonNegative: "Cancel",
+      buttonPositive: "OK",
+    });
+
+    if (
+      grantResult['android.permission.READ_PHONE_STATE'] === 'granted' &&
+      grantResult['android.permission.READ_CALL_LOG'] === 'granted'
+    ) {
+      console.log("You can read phone state and call log");
     } else {
-      console.log("Phone state permission denied");
+      console.log("Phone state or call log permission denied");
     }
   } catch (err) {
     console.warn(err);
